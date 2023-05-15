@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+def system!(*args)
+  system(*args) || abort("\n== Command #{args} failed ==")
+end
+
+def run_in_parallel(*commands)
+  threads = commands.map do |command|
+    Thread.new { system(command) }
+  end
+  threads.each(&:join)
+end
+
+system!('bin/setup')
+
+rails_server_command = 'bin/rails s'
+react_server_command = 'bin/webpack-dev-server'
+
+run_in_parallel(rails_server_command, react_server_command)
